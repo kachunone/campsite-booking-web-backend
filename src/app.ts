@@ -3,19 +3,47 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from "cors";
+import mongoose from "mongoose";
+import HttpError from "./models/http-error";
+import { Request, Response, NextFunction } from "express";
+import authRoutes from "./routes/auth-routes";
+import campsiteRoutes from "./routes/campsite-routes";
 
 const app = express();
 
-app.use(
-  cors({
-    credentials: true,
-  })
-);
-
+app.use(cors({ credentials: true }));
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-app.listen(8080, () => {
-  console.log("Server running on http://localhost:8080/");
+app.use("/api/auth", authRoutes);
+app.use("/api/campsite", campsiteRoutes);
+
+// This middleware will be reached when no response from the previous one
+app.use(() => {
+  throw new HttpError("Could not find this route.", 404);
 });
+
+// Catch error from the previous middlewares
+app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
+  if (res.headersSent) {
+    return next(error);
+  }
+  res
+    .status(error.code || 500)
+    .json({ message: error.message || "An unknow error occurred!" });
+});
+
+mongoose
+  .connect(
+    "mongodb+srv://morriswan:morriswan@cluster0.hyliclo.mongodb.net/campsite-booking"
+  )
+  .then(() => {
+    console.log("connected to MongoDB!!");
+    app.listen(8080, () => {
+      console.log("Server running on http://localhost:8080/");
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
