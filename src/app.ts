@@ -8,8 +8,19 @@ import HttpError from "./models/http-error";
 import { Request, Response, NextFunction } from "express";
 import authRoutes from "./routes/auth-routes";
 import campsiteRoutes from "./routes/campsite-routes";
+import bookingRoutes from "./routes/booking-routes";
+import { AuthController } from "./controllers/auth-controllers";
 
 const app = express();
+
+declare global {
+  namespace Express {
+    interface Request {
+      userId: string;
+      camsiteId: string;
+    }
+  }
+}
 
 app.use(cors({ credentials: true }));
 app.use(compression());
@@ -18,6 +29,7 @@ app.use(bodyParser.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/campsite", campsiteRoutes);
+app.use("/api/booking", AuthController.verifyToken, bookingRoutes);
 
 // This middleware will be reached when no response from the previous one
 app.use(() => {

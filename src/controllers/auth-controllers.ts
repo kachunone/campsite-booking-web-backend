@@ -4,9 +4,15 @@ import User from "../models/user";
 import HttpError from "../models/http-error";
 import jwt from "jsonwebtoken";
 
+type DecodedToken = {
+  userId: string;
+  iat: number;
+  exp: number;
+};
+
 export class AuthController {
-  private static generateToken(userId: number) {
-    return jwt.sign({ id: userId }, "mysecret", { expiresIn: "1h" });
+  private static generateToken(userId: string) {
+    return jwt.sign({ userId: userId }, "mysecret", { expiresIn: "1h" });
   }
 
   public static verifyToken(req: Request, res: Response, next: NextFunction) {
@@ -17,11 +23,12 @@ export class AuthController {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    jwt.verify(token, "mysecret", (err, decoded) => {
+    jwt.verify(token, "mysecret", (err, decoded: DecodedToken) => {
       if (err) {
         return res.status(403).json({ message: "Forbidden" });
       }
-      console.log(decoded);
+      console.log(decoded.userId);
+      req.userId = decoded.userId;
       next();
     });
   }
@@ -65,6 +72,7 @@ export class AuthController {
           new HttpError("Invalid credentials, could not log you in.", 401)
         );
       }
+      console.log(existingUser);
       const userToken = AuthController.generateToken(existingUser.id);
       console.log(userToken);
       res.json({ message: "Logged In!", token: userToken });

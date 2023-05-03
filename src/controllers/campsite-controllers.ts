@@ -12,6 +12,7 @@ const dummyData = [
     region: "Downtown Toronto",
     equipment: ["Singe tent"],
     price: 50,
+    image: "../assets/campsite-image.jpeg",
   },
   {
     title: "Midtown Oasis",
@@ -20,6 +21,7 @@ const dummyData = [
     region: "Midtown Toronto",
     equipment: ["3 tents", "Trailer up to 18ft"],
     price: 100,
+    image: "../assets/campsite-image2.jpeg",
   },
   {
     title: "Country Charm",
@@ -28,10 +30,11 @@ const dummyData = [
     region: "York",
     equipment: ["Singe tent", "3 tents"],
     price: 75,
+    image: "../assets/campsite-image3.jpeg",
   },
 ];
 
-class CampsiteController {
+export default class CampsiteController {
   static async getCampsites(req: Request, res: Response, next: NextFunction) {
     try {
       const campsites = await Campsite.find({});
@@ -52,5 +55,3 @@ class CampsiteController {
     }
   }
 }
-
-export default CampsiteController;

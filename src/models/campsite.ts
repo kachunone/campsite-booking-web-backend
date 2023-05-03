@@ -1,5 +1,5 @@
-import { Schema, model, Document, Types } from "mongoose";
-import Booking, { IBooking } from "./booking";
+import { Schema, model, Document } from "mongoose";
+import Booking from "./booking";
 
 interface ICampsite extends Document {
   title: string;
@@ -7,7 +7,8 @@ interface ICampsite extends Document {
   region: string;
   equipment: string[];
   price: number;
-  bookings: Types.DocumentArray<IBooking>;
+  image: String;
+  bookings: Schema.Types.ObjectId[];
 }
 
 const campsiteSchema = new Schema<ICampsite>({
@@ -16,12 +17,15 @@ const campsiteSchema = new Schema<ICampsite>({
   region: { type: String, required: true },
   equipment: { type: [String], required: true },
   price: { type: Number, required: true },
+  image: { type: String, required: true },
   bookings: [
     {
       type: Schema.Types.ObjectId,
-      ref: Booking.modelName,
+      ref: "Booking",
     },
   ],
 });
 
-export default model<ICampsite>("Campsite", campsiteSchema);
+const Campsite = model<ICampsite>("Campsite", campsiteSchema);
+
+export default Campsite;

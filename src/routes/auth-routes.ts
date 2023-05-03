@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/users", AuthController.verifyToken, AuthController.getUsers);
 
-router.get(
+router.post(
   "/login",
   [
     check("email").normalizeEmail().isEmail(),
