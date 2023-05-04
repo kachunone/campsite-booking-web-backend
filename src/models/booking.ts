@@ -1,8 +1,8 @@
-import { Document, model, Schema } from "mongoose";
-import User from "./user";
-import Campsite from "./campsite";
+import { Document, model, Schema, PopulatedDoc, ObjectId } from "mongoose";
+import User, { IUser } from "./user";
+import Campsite, { ICampsite } from "./campsite";
 
-export interface IBooking extends Document {
+interface IBooking extends Document {
   campsite: Schema.Types.ObjectId;
   createDate: Date;
   start: Date;
@@ -11,12 +11,12 @@ export interface IBooking extends Document {
 }
 
 const bookingSchema = new Schema<IBooking>({
+  createDate: { type: Date, required: true },
   campsite: {
     type: Schema.Types.ObjectId,
     ref: Campsite.modelName,
     required: true,
   },
-  createDate: { type: Date, required: true },
   customer: {
     type: Schema.Types.ObjectId,
     ref: User.modelName,

@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import Campsite from "../models/campsite";
 import HttpError from "../models/http-error";
-import { Schema, model, Document, Types } from "mongoose";
-import { IBooking } from "../models/booking";
 
 const dummyData = [
   {

@@ -1,7 +1,7 @@
 import { Schema, model, Document } from "mongoose";
 import Booking from "./booking";
 
-interface ICampsite extends Document {
+export interface ICampsite extends Document {
   title: string;
   description: string;
   region: string;

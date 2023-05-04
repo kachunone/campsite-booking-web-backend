@@ -27,7 +27,6 @@ export class AuthController {
       if (err) {
         return res.status(403).json({ message: "Forbidden" });
       }
-      console.log(decoded.userId);
       req.userId = decoded.userId;
       next();
     });

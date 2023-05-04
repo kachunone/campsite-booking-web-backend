@@ -17,7 +17,7 @@ declare global {
   namespace Express {
     interface Request {
       userId: string;
-      camsiteId: string;
+      campsiteId: string;
     }
   }
 }
