@@ -1,5 +1,4 @@
 import { Schema, model, Document } from "mongoose";
-import mongooseUniqueValidator from "mongoose-unique-validator";
 
 export interface IUser extends Document {
   name: string;
@@ -13,6 +12,5 @@ const userSchema = new Schema<IUser>({
   password: { type: String, required: true },
 });
 
-userSchema.plugin(mongooseUniqueValidator);
 const User = model<IUser>("User", userSchema);
 export default User;
