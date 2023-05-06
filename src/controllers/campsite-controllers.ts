@@ -35,7 +35,10 @@ const dummyData = [
 export default class CampsiteController {
   static async getCampsites(req: Request, res: Response, next: NextFunction) {
     try {
-      const campsites = await Campsite.find({});
+      const campsites = await Campsite.find({}).populate({
+        path: "bookings",
+        select: { start: true, end: true },
+      });
       res.json(campsites);
     } catch (err) {
       return next(new HttpError("Failed to fetch campsites infomation.", 422));

@@ -10,21 +10,24 @@ interface IBooking extends Document {
   customer: Schema.Types.ObjectId;
 }
 
-const bookingSchema = new Schema<IBooking>({
-  createDate: { type: Date, required: true },
-  campsite: {
-    type: Schema.Types.ObjectId,
-    ref: Campsite.modelName,
-    required: true,
+const bookingSchema = new Schema<IBooking>(
+  {
+    createDate: { type: Date, required: true },
+    campsite: {
+      type: Schema.Types.ObjectId,
+      ref: Campsite.modelName,
+      required: true,
+    },
+    customer: {
+      type: Schema.Types.ObjectId,
+      ref: User.modelName,
+      required: true,
+    },
+    start: { type: Date, required: true },
+    end: { type: Date, required: true },
   },
-  customer: {
-    type: Schema.Types.ObjectId,
-    ref: User.modelName,
-    required: true,
-  },
-  start: { type: Date, required: true },
-  end: { type: Date, required: true },
-});
+  { optimisticConcurrency: true }
+);
 
 const Booking = model<IBooking>("Booking", bookingSchema);
 export default Booking;

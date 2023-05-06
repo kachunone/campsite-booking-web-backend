@@ -1,8 +1,9 @@
 import HttpError from "../models/http-error";
 import Booking from "../models/booking";
-import Campsite, { ICampsite } from "../models/campsite";
+import Campsite from "../models/campsite";
 import { Request, Response, NextFunction } from "express";
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose from "mongoose";
+import { checkDateOverlap } from "..//utils/helpers";
 
 export default class BookingController {
   static async getBookingsById(
@@ -26,6 +27,23 @@ export default class BookingController {
     const session = await mongoose.startSession();
 
     try {
+      //fetch selected campsite and its occupied days
+      const campsite = await Campsite.findById(campsiteId).populate({
+        path: "bookings",
+        select: { start: true, end: true },
+      });
+
+      //check if dateRange is overlapped
+      //else reject request
+      const dateRangeOccupied = checkDateOverlap(
+        { start: new Date(start), end: new Date(end) },
+        campsite.bookings as any
+      );
+      if (dateRangeOccupied) {
+        return next(new HttpError("DateRange occupied!", 422));
+      }
+
+      //create new booking object
       const bookingToBeCreated = {
         campsite: campsiteId,
         customer: req.userId,
@@ -34,11 +52,14 @@ export default class BookingController {
         end: new Date(end),
       };
 
+      //create booking to database
       session.startTransaction();
       const booking = new Booking(bookingToBeCreated);
       const createdBooking = await booking.save({ session });
-      const campsite = await Campsite.findById(createdBooking.campsite);
       campsite.bookings.push(createdBooking.id);
+      //save() will check if __v is still the same with database's one
+      //to perform optimistic concurrency control
+      //else it will fail and rollback all operation.
       await campsite.save({ session });
       await session.commitTransaction();
 
@@ -52,44 +73,24 @@ export default class BookingController {
     }
   }
 
-  static async updateBooking(req: Request, res: Response, next: NextFunction) {
-    const { bookingId, start, end } = req.body;
-    console.log(bookingId);
-    const filter = { _id: bookingId };
-    const update = { start: new Date(start), end: new Date(end) };
-
-    try {
-      // Note: findOneAndUpdate won't increase __v by default
-      const bookingTobeUpdated = await Booking.findOneAndUpdate(filter, update);
-      if (bookingTobeUpdated === null) {
-        return next(new HttpError("cannot find the booking!", 422));
-      }
-      res.status(201).json({ message: "updated successfully" });
-    } catch (err) {
-      return next(new HttpError("cannot update the booking!", 422));
-    }
-  }
-
   static async deleteBooking(req: Request, res: Response, next: NextFunction) {
     const bookingId = req.params.bid;
 
     const session = await mongoose.startSession();
     try {
       session.startTransaction();
-
       const bookingToBeDeleted = await Booking.findOne({
         _id: bookingId,
-      }).populate({ path: "campsite", select: "bookings" });
+      }).populate({ path: "campsite", select: { bookings: true, __v: true } });
       await bookingToBeDeleted.deleteOne({ session });
       (bookingToBeDeleted.campsite as any).bookings.pull(bookingToBeDeleted);
       await (bookingToBeDeleted.campsite as any).save({ session });
-
       await session.commitTransaction();
 
       res.status(201).json({ message: "deleted successfully" });
     } catch (err) {
-      await session.abortTransaction();
       console.log(err);
+      await session.abortTransaction();
       return next(new HttpError("cannot delete the booking!", 422));
     } finally {
       session.endSession();

@@ -12,7 +12,7 @@ type DecodedToken = {
 
 export class AuthController {
   private static generateToken(userId: string) {
-    return jwt.sign({ userId: userId }, "mysecret", { expiresIn: "1h" });
+    return jwt.sign({ userId: userId }, "mysecret", { expiresIn: "5h" });
   }
 
   public static verifyToken(req: Request, res: Response, next: NextFunction) {
@@ -46,10 +46,8 @@ export class AuthController {
       await createdUser.save();
       res.status(201).json({ user: createdUser.toObject({ getters: true }) });
     } catch (err) {
+      console.log(err);
       let errorMsg = "Signing up failed, please try again later";
-      if (err.errors["email"]) {
-        errorMsg = "Email already exists";
-      }
       const error = new HttpError(errorMsg, 500);
       return next(error);
     }

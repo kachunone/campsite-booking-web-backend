@@ -11,20 +11,23 @@ export interface ICampsite extends Document {
   bookings: Schema.Types.ObjectId[];
 }
 
-const campsiteSchema = new Schema<ICampsite>({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  region: { type: String, required: true },
-  equipment: { type: [String], required: true },
-  price: { type: Number, required: true },
-  image: { type: String, required: true },
-  bookings: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Booking",
-    },
-  ],
-});
+const campsiteSchema = new Schema<ICampsite>(
+  {
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    region: { type: String, required: true },
+    equipment: { type: [String], required: true },
+    price: { type: Number, required: true },
+    image: { type: String, required: true },
+    bookings: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Booking",
+      },
+    ],
+  },
+  { optimisticConcurrency: true }
+);
 
 const Campsite = model<ICampsite>("Campsite", campsiteSchema);
 
