@@ -22,6 +22,7 @@ declare global {
   }
 }
 
+app.use(express.static("assets"));
 app.use(cors({ credentials: true }));
 app.use(compression());
 app.use(cookieParser());

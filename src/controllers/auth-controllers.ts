@@ -34,6 +34,7 @@ export class AuthController {
 
   static async signup(req: Request, res: Response, next: NextFunction) {
     const errors = validationResult(req);
+    console.log(errors);
     if (!errors.isEmpty()) {
       return next(
         new HttpError("Invalid inputs passed, please check you data.", 422)
@@ -56,6 +57,7 @@ export class AuthController {
   static async login(req: Request, res: Response, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log(errors);
       return next(
         new HttpError("Invalid inputs passed, please check you data.", 422)
       );
@@ -72,7 +74,7 @@ export class AuthController {
       console.log(existingUser);
       const userToken = AuthController.generateToken(existingUser.id);
       console.log(userToken);
-      res.json({ message: "Logged In!", token: userToken });
+      res.status(200).json({ message: "Logged In!", token: userToken });
     } catch (err) {
       console.log(err);
       const error = new HttpError(
@@ -80,15 +82,6 @@ export class AuthController {
         500
       );
       return next(error);
-    }
-  }
-
-  static async getUsers(req: Request, res: Response, next: NextFunction) {
-    try {
-      const users = await User.find({});
-      res.json(users);
-    } catch (err) {
-      return next(new HttpError("Cannot fetch users.", 401));
     }
   }
 }

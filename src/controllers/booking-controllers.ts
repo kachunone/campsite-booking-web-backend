@@ -34,11 +34,12 @@ export default class BookingController {
       });
 
       //check if dateRange is overlapped
-      //else reject request
+      //set campsite.bookings to any after populated
       const dateRangeOccupied = checkDateOverlap(
         { start: new Date(start), end: new Date(end) },
         campsite.bookings as any
       );
+
       if (dateRangeOccupied) {
         return next(new HttpError("DateRange occupied!", 422));
       }
@@ -57,16 +58,13 @@ export default class BookingController {
       const booking = new Booking(bookingToBeCreated);
       const createdBooking = await booking.save({ session });
       campsite.bookings.push(createdBooking.id);
-      //save() will check if __v is still the same with database's one
-      //to perform optimistic concurrency control
-      //else it will fail and rollback all operation.
       await campsite.save({ session });
       await session.commitTransaction();
 
       res.status(201).json({ message: "created successfully" });
     } catch (err) {
-      console.log(err);
       await session.abortTransaction();
+      console.log(err);
       return next(new HttpError("cannot create a booking!", 422));
     } finally {
       session.endSession();
@@ -79,11 +77,15 @@ export default class BookingController {
     const session = await mongoose.startSession();
     try {
       session.startTransaction();
+
       const bookingToBeDeleted = await Booking.findOne({
         _id: bookingId,
       }).populate({ path: "campsite", select: { bookings: true, __v: true } });
       await bookingToBeDeleted.deleteOne({ session });
+
+      //bookings cannot be detected after populated so set campsite to any type
       (bookingToBeDeleted.campsite as any).bookings.pull(bookingToBeDeleted);
+
       await (bookingToBeDeleted.campsite as any).save({ session });
       await session.commitTransaction();
 

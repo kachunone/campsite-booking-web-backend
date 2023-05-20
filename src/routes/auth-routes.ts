@@ -4,8 +4,6 @@ import { AuthController } from "../controllers/auth-controllers";
 
 const router = express.Router();
 
-router.get("/users", AuthController.verifyToken, AuthController.getUsers);
-
 router.post(
   "/login",
   [
