@@ -13,7 +13,10 @@ export default class BookingController {
   ) {
     const userId = req.userId;
     try {
-      const result = await Booking.find({ customer: userId });
+      const result = await Booking.find({ customer: userId }).populate({
+        path: "campsite",
+        select: { image: true },
+      });
       res.json(result);
     } catch {
       return next(
