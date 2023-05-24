@@ -10,6 +10,9 @@ import authRoutes from "./routes/auth-routes";
 import campsiteRoutes from "./routes/campsite-routes";
 import bookingRoutes from "./routes/booking-routes";
 import { AuthController } from "./controllers/auth-controllers";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
@@ -48,13 +51,11 @@ app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
 });
 
 mongoose
-  .connect(
-    "mongodb+srv://morriswan:morriswan@cluster0.hyliclo.mongodb.net/campsite-booking"
-  )
+  .connect(process.env.MONGODB_CONNECTION_STRING)
   .then(() => {
     console.log("connected to MongoDB!!");
-    app.listen(8080, () => {
-      console.log("Server running on http://localhost:8080/");
+    app.listen(process.env.SERVER_PORT_NUMBER, () => {
+      console.log(`Server running on ${process.env.SERVER_PORT_NUMBER}`);
     });
   })
   .catch((err) => {
