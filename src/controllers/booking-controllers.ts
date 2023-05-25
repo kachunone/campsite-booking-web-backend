@@ -26,7 +26,7 @@ export default class BookingController {
   }
 
   static async createBooking(req: Request, res: Response, next: NextFunction) {
-    const { campsiteId, start, end } = req.body;
+    const { campsiteId, start, end, totalPrice } = req.body;
     const session = await mongoose.startSession();
 
     try {
@@ -54,6 +54,7 @@ export default class BookingController {
         createDate: new Date(),
         start: new Date(start),
         end: new Date(end),
+        totalPrice: totalPrice,
       };
 
       //create booking to database

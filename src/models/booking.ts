@@ -5,9 +5,10 @@ import Campsite, { ICampsite } from "./campsite";
 interface IBooking extends Document {
   campsite: Schema.Types.ObjectId;
   createDate: Date;
+  customer: Schema.Types.ObjectId;
   start: Date;
   end: Date;
-  customer: Schema.Types.ObjectId;
+  totalPrice: number;
 }
 
 const bookingSchema = new Schema<IBooking>(
@@ -25,6 +26,7 @@ const bookingSchema = new Schema<IBooking>(
     },
     start: { type: Date, required: true },
     end: { type: Date, required: true },
+    totalPrice: { type: Number, require: true },
   },
   { optimisticConcurrency: true }
 );

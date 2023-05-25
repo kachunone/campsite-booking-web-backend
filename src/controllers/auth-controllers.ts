@@ -48,7 +48,7 @@ export class AuthController {
       res.status(201).json({ user: createdUser.toObject({ getters: true }) });
     } catch (err) {
       console.log(err);
-      let errorMsg = "Signing up failed, please try again later";
+      let errorMsg = "Signing up failed.";
       const error = new HttpError(errorMsg, 500);
       return next(error);
     }
@@ -74,7 +74,11 @@ export class AuthController {
       console.log(existingUser);
       const userToken = AuthController.generateToken(existingUser.id);
       console.log(userToken);
-      res.status(200).json({ message: "Logged In!", token: userToken });
+      res.status(200).json({
+        message: "Logged In!",
+        token: userToken,
+        username: existingUser.name,
+      });
     } catch (err) {
       console.log(err);
       const error = new HttpError(
