@@ -36,15 +36,21 @@ Follow these steps to set up the backend server:
 
 1. Clone the repository:
 
-    ```git clone https://github.com/your/repository.git```
+    ```
+    git clone https://github.com/your/repository.git
+    ```
    
 2. Install dependencies:
 
-    ```npm run build```
+    ```
+    npm run build
+    ```
   
 3. Build the TypeScript code:
 
-    ```npm run build```
+    ```
+    npm run build
+    ```
   
   
 ## Configuration
@@ -58,7 +64,9 @@ The server can be configured using environment variables. Create a .env file in 
 
 To start the backend server, run the following command:
 
-  ```npm start```
+  ```
+  npm start
+  ```
   
 The server will start listening on port 3000 by default. You can access it at http://localhost:8080.
 
@@ -70,7 +78,8 @@ The server uses JWT for authentication and authorization. When making requests t
 
 Example:
 
-  ```Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  ```
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   ```
 Refer to the API documentation for specific endpoints that require authentication.
 
