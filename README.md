@@ -4,6 +4,7 @@ This is the backend server for the Campsite Booking App, which provides API serv
 
 ## Table of Contents
 
+- [Frontend](#frontend)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
@@ -11,8 +12,15 @@ This is the backend server for the Campsite Booking App, which provides API serv
 - [Usage](#usage)
 - [API Documentation](#api-documentation)
 - [Authentication and Authorization](#authentication-and-authorization)
-- [Contributing](#contributing)
-- [License](#license)
+
+
+## Frontend
+
+The backend server serves the frontend of the Campsite Booking App, which can be accessed at [example.com](link-example). The frontend provides a user-friendly interface for users to interact with the campsite booking system.
+
+To use the frontend, ensure that you have the necessary prerequisites installed and follow the installation instructions provided in the frontend repository.
+
+- Frontend Repository: [Frontend Repository](https://github.com/kachunone/campsite-booking-web-frontend.git)
 
 ## Features
 
