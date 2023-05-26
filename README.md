@@ -58,9 +58,8 @@ The server can be configured using environment variables. Create a .env file in 
 
 To start the backend server, run the following command:
 
-  ```npm start
-  ```
-
+  ```npm start```
+  
 The server will start listening on port 3000 by default. You can access it at http://localhost:8080.
 
 ## API Documentation
