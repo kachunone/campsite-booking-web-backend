@@ -12,7 +12,9 @@ type DecodedToken = {
 
 export class AuthController {
   private static generateToken(userId: string) {
-    return jwt.sign({ userId: userId }, "mysecret", { expiresIn: "5h" });
+    return jwt.sign({ userId: userId }, process.env.PRIVATE_KEY_JWT, {
+      expiresIn: "5h",
+    });
   }
 
   public static verifyToken(req: Request, res: Response, next: NextFunction) {
@@ -23,13 +25,17 @@ export class AuthController {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    jwt.verify(token, "mysecret", (err, decoded: DecodedToken) => {
-      if (err) {
-        return res.status(403).json({ message: "Forbidden" });
+    jwt.verify(
+      token,
+      process.env.PRIVATE_KEY_JWT,
+      (err, decoded: DecodedToken) => {
+        if (err) {
+          return res.status(403).json({ message: "Forbidden" });
+        }
+        req.userId = decoded.userId;
+        next();
       }
-      req.userId = decoded.userId;
-      next();
-    });
+    );
   }
 
   static async signup(req: Request, res: Response, next: NextFunction) {
